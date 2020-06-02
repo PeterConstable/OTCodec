@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/OTCodec_NUnitTest/TestData/ADMSB___.TTF
+/OTCodec_NUnitTest/TestData/CAMBRIA.TTC
+/OTCodec_NUnitTest/TestData/skia.ttf

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OTCodec", "OTCodec\OTCodec.csproj", "{84520088-5315-4B3B-8F9C-EF3CB5BD1BFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OTCodec_NUnitTest", "OTCodec_NUnitTest\OTCodec_NUnitTest.csproj", "{20065B64-231F-4EBD-A7F9-37033C0C7586}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84520088-5315-4B3B-8F9C-EF3CB5BD1BFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84520088-5315-4B3B-8F9C-EF3CB5BD1BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84520088-5315-4B3B-8F9C-EF3CB5BD1BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84520088-5315-4B3B-8F9C-EF3CB5BD1BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20065B64-231F-4EBD-A7F9-37033C0C7586}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20065B64-231F-4EBD-A7F9-37033C0C7586}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20065B64-231F-4EBD-A7F9-37033C0C7586}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20065B64-231F-4EBD-A7F9-37033C0C7586}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A540CBDA-3A62-4636-8E23-7642647BAA2F}
+	EndGlobalSection
+EndGlobal
