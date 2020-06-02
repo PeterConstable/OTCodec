@@ -29,6 +29,8 @@ namespace OTCodec
 
             public void ReadBaseGlyphRecord(MemoryStream ms)
             {
+                _validationStatus = OTFile.OTRecordValidation_PartialValidation;
+
                 try
                 {
                     _gID = OTFile.ReadUInt16(ms);
@@ -40,9 +42,45 @@ namespace OTCodec
                     _validationStatus |= OTFile.OTRecordValidation_ReadTrunctated;
                     throw new OTDataIncompleteReadException("OT parse error: unable to read base glyph record", e);
                 }
+
+                // record-internal validations are complete
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_PartialValidation);
+                _validationStatus |= OTFile.OTRecordValidation_InternalValidationOnly;
+            }
+
+            public byte Validate(UInt16 numLayerRecords)
+            {
+                if ((_firstLayerIndex + _numLayers) > numLayerRecords)
+                    _validationStatus |= OTFile.OTRecordValidation_ExternalValidationError;
+
+                // internal validations done when reading
+                // haven't yet validated glyph ID
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_PartialValidation);
+                _validationStatus |= OTFile.OTRecordValidation_InternalValidationOnly;
+
+                return _validationStatus;
+            }
+
+            public byte Validate(UInt16 maxGlyphID, UInt16 numLayerRecords)
+            {
+                if (_gID > maxGlyphID)
+                    _validationStatus |= OTFile.OTRecordValidation_ExternalValidationError;
+
+                if ((_firstLayerIndex + _numLayers) > numLayerRecords)
+                    _validationStatus |= OTFile.OTRecordValidation_ExternalValidationError;
+
+                // all internal and internal validations are completed
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_PartialValidation);
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_InternalValidationOnly);
+
+                if (_validationStatus == OTFile.OTRecordValidation_NotValidated)
+                    _validationStatus = OTFile.OTRecordValidation_Valid;
+
+                return _validationStatus;
             }
 
             #endregion
+
         } // struct BaseGlyphRecord
 
         public struct LayerRecord
@@ -62,6 +100,8 @@ namespace OTCodec
 
             public void ReadLayerRecord(MemoryStream ms)
             {
+                _validationStatus = OTFile.OTRecordValidation_PartialValidation;
+
                 try
                 {
                     _gID = OTFile.ReadUInt16(ms);
@@ -72,6 +112,27 @@ namespace OTCodec
                     _validationStatus |= OTFile.OTRecordValidation_ReadTrunctated;
                     throw new OTDataIncompleteReadException("OT parse error: unable to read layer record", e);
                 }
+                // record-internal validations are complete
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_PartialValidation);
+                _validationStatus |= OTFile.OTRecordValidation_InternalValidationOnly;
+            }
+
+            public byte Validate(UInt16 maxGlyphID, UInt16 maxPaletteIndex)
+            {
+                if (_gID > maxGlyphID)
+                    _validationStatus |= OTFile.OTRecordValidation_ExternalValidationError;
+
+                if (_paletteIndex > maxPaletteIndex)
+                    _validationStatus |= OTFile.OTRecordValidation_ExternalValidationError;
+
+                // all internal and internal validations are completed
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_PartialValidation);
+                _validationStatus &= (0xff - OTFile.OTRecordValidation_InternalValidationOnly);
+
+                if (_validationStatus == OTFile.OTRecordValidation_NotValidated)
+                    _validationStatus = OTFile.OTRecordValidation_Valid;
+
+                return _validationStatus;
             }
 
             #endregion
@@ -84,7 +145,7 @@ namespace OTCodec
         #region Constants, fields & accessors
 
         // private constants
-        private const string _tableTag = "head";
+        private const string _tableTag = "COLR";
         private const uint _latestKnownMinorVersion = 0;
         private const uint _colr_0_headerLength = 3 * sizeof(UInt16) + 2 * sizeof(UInt32);
         private const uint _baseGlyphRecordLength = sizeof(UInt16) * 3;
@@ -132,7 +193,52 @@ namespace OTCodec
 
         public override UInt64 Validate(bool simpleValidationOnly)
         {
-            throw new NotImplementedException();
+            /* See comments in OTTable regarding validation completion states and flags.
+             * Assumed: this method does not re-do basic validations, and the completion
+             * state flags can be set the same as on any prior call to the method.
+             */
+
+            /* Base Base class constructor ran partial validations on the table record:
+             *   - table record tag matches type for this derived class
+             *   - table offset and length are within file bounds
+             *   - table record checksum == actual table checksum
+             *   
+             * For simple validation, the following additional internal validation is
+             * required:
+             *   - for each base glyph record: (firstLayerIndex + numLayers) is less
+             *     than or equal to numLayerRecords
+             * 
+             * Simple validation does not validate various fields that require comparison
+             * with other tables:
+             *   - gIDs in all base glyph records and all layer records are valid (compare to maxp or loca)
+             *   - paletteIndex in all layer records is valid (compare to 'CPAL')
+             */
+
+            // validate layer fields in base glyph records
+            for (uint i = 0; i < _numBaseGlyphRecords; i++)
+            {
+                BaseGlyphRecord bgr = _baseGlyphRecords[i];
+                if ((bgr.FirstLayerIndex + bgr.NumLayers) > _numLayerRecords)
+                {
+                    // validate within the COLR table but not external to COLR
+                    byte bgr_val = bgr.Validate(_numLayerRecords);
+                    if ((bgr_val & OTFile.OTRecordValidation_ExternalValidationError) != 0)
+                        _validationStatus |= OTFile.OTFileValidation_StructureFieldsInternallyInvalid;
+                }
+            }
+
+            // layer records have no additional COLR-internal validation
+
+            // set completion state for all COLR-internal validation
+            _validationStatus &= ~OTFile.OTFileValidation_PartialValidation;
+            _validationStatus |= OTFile.OTFileValidation_InternalValidationOnly;
+
+            if (!simpleValidationOnly)
+            {
+                // TO DO: implement this!!
+            }
+
+            return _validationStatus;
         }
 
         #endregion
@@ -208,7 +314,7 @@ namespace OTCodec
 
             try
             {
-                ms.Seek(_tableRecord.Offset + _baseGlyphRecordsOffset, SeekOrigin.Begin);
+                ms.Seek(_tableRecord.Offset + _layerRecordsOffset, SeekOrigin.Begin);
                 _layerRecords = new LayerRecord[_numLayerRecords];
                 for (uint i = 0; i < _numLayerRecords; i++)
                 {

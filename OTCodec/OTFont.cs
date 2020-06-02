@@ -250,6 +250,7 @@ namespace OTCodec
         {
             switch (tag.ToString())
             {
+                case "COLR":
                 case "fmtx":
                 //case "fvar":
                 //case "GPOS":
@@ -305,6 +306,9 @@ namespace OTCodec
                 {
                     switch (_offsetTable.TableRecords[i].Tag.ToString())
                     {
+                        case "COLR":
+                            _tables[i] = new TableColr(this, _offsetTable.TableRecords[i]);
+                            break;
                         case "fmtx":
                             _tables[i] = new TableFmtx(this, _offsetTable.TableRecords[i]);
                             break;

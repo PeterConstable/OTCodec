@@ -766,6 +766,14 @@ namespace OTCodec_NUnitTest
             return f;
         }
 
+        internal static OTFile GetOTFile_BungeeColorRegular()
+        {
+            string FilePath = "TestData\\BungeeColor-Regular_colr_Windows.TTF";
+            OTFile f = new OTFile();
+            f.ReadFromFile(FilePath);
+            return f;
+        }
+
         internal static OTFile GetOTFile_CambriaTtc()
         {
             string FilePath = "TestData\\CAMBRIA.TTC";
