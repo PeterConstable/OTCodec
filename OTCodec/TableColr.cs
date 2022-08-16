@@ -10,7 +10,7 @@ namespace OTCodec
 
         #region Structs used in the context of COLR table
 
-        public struct BaseGlyphRecord
+        public struct BaseGlyphRecord // current with COLRv0 in OT 1.8.x
         {
             #region Fields & accessors
 
@@ -83,7 +83,7 @@ namespace OTCodec
 
         } // struct BaseGlyphRecord
 
-        public struct LayerRecord
+        public struct LayerRecord // current with COLRv0 in OT 1.8.x
         {
             #region Fields & accessors
 
@@ -155,6 +155,8 @@ namespace OTCodec
         // private fields
 
         // base class holds _parentFont, _tableRecord, _calculatedChecksum, _validationStatus
+
+        // COLR v0 members
         private UInt16 _version;
         private UInt16 _numBaseGlyphRecords;
         private UInt32 _baseGlyphRecordsOffset;
