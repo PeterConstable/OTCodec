@@ -15,7 +15,8 @@ namespace OTCodec_NUnitTest
             // appears to be run before each test
             if (!System.IO.Directory.Exists("TestData"))
             {
-                System.IO.Directory.SetCurrentDirectory("..\\..\\..");
+                string threeUpPath = ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + "..";
+                System.IO.Directory.SetCurrentDirectory(threeUpPath);
             }
             DirectoryAssert.Exists("TestData", "Error: Unable to locate TestData folder.");
         }
@@ -84,7 +85,7 @@ namespace OTCodec_NUnitTest
         {
             OTFile target = new OTFile();
 
-            string FilePath = "TestData\\selawk.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "selawk.ttf";
             try
             {
                 target.ReadFromFile(FilePath);
@@ -100,7 +101,7 @@ namespace OTCodec_NUnitTest
             Assert.IsTrue(actual.Length == expected.Length);
             Assert.IsTrue(actual.Name == "selawk.ttf");
             Assert.IsTrue(actual.Extension == ".ttf");
-            Assert.IsTrue(actual.DirectoryName == Directory.GetCurrentDirectory() + "\\TestData");
+            Assert.IsTrue(actual.DirectoryName == Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "TestData");
         }
 
         [Test]
@@ -108,7 +109,7 @@ namespace OTCodec_NUnitTest
         {
             // construct OTFile and read from test font
             OTFile target = new OTFile();
-            string FilePath = "TestData\\selawk.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "selawk.ttf";
             target.ReadFromFile(FilePath);
 
             // Get memory stream and take sample
@@ -144,7 +145,7 @@ namespace OTCodec_NUnitTest
             bool caughtExpectedException = false; // will set to true if expected exception is caught
 
             OTFile target = new OTFile();
-            string FilePath = "TestData\\InvalidFile_3Bytes.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "InvalidFile_3Bytes.ttf";
             try
             {
                 target.ReadFromFile(FilePath);
@@ -168,7 +169,7 @@ namespace OTCodec_NUnitTest
             bool caughtExpectedException = false; // will set to true if expected exception is caught
 
             // test for unrecognized sfnt tag
-            string FilePath = "TestData\\InvalidFile_4Bytes.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "InvalidFile_4Bytes.ttf";
             try
             {
                 target.ReadFromFile(FilePath);
@@ -188,7 +189,7 @@ namespace OTCodec_NUnitTest
         public void OTFileOpenTest_ReadSingleFontOffsetTable()
         {
             OTFile target = new OTFile();
-            string FilePath = "TestData\\selawk.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "selawk.ttf";
             try
             {
                 target.ReadFromFile(FilePath);
@@ -216,8 +217,52 @@ namespace OTCodec_NUnitTest
         public void OTFileOpenTest_ReadTtcHeaderAndOffsetTables()
         {
 
+            //OTFile target = new OTFile();
+            //string FilePath = "TestData" + Path.DirectorySeparatorChar + "CAMBRIA.TTC";
+            //try
+            //{
+            //    target.ReadFromFile(FilePath);
+            //}
+            //catch (Exception)
+            //{
+            //    // unexpected exception
+            //}
+
+            //Assert.IsTrue(target.SfntVersionTag == (OTTag)("ttcf"), "Error: unexpected sfnt tag");
+            //// check one detail of ttc header
+            //Assert.IsTrue(target.TtcHeader.DSIGOffset == 0x0018AB54, "Error: unexpected TtcHeader value");
+            //Assert.IsTrue(target.NumFonts == 2, "Error: unexpected OTFile value");
+            //Assert.IsTrue(target.Length == 1622732, "Error: unexpected OTFile value");
+            //Assert.IsTrue(target.IsSupportedFileType, "Error: unexpected OTFile value");
+            //Assert.IsTrue(target.IsCollection, "Error: unexpected OTFile value");
+
+            //// now check that offset tables of both fonts are read
+            //OTFont f = target.GetFont(0);
+            //Assert.IsTrue(f.OffsetInFile == 0x20, "Error: unexpected font offset");
+            //Assert.IsTrue(f.SfntVersionTag == (OTTag)(0x00010000), "Error: unexpected font value");
+            //Assert.IsTrue(f.IsWithinTtc, "Error: unexpected font value");
+            //Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x20, "Error: unexpected offset table offset");
+            //Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)(0x00010000), "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.NumTables == 20, "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.SearchRange == 0x0100, "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.EntrySelector == 0x0004, "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.RangeShift == 64, "Error: unexpected font offset table value");
+
+            //f = target.GetFont(1);
+            //Assert.IsTrue(f.OffsetInFile == 0x16C, "Error: unexpected font offset");
+            //Assert.IsTrue(f.SfntVersionTag == (OTTag)(0x00010000), "Error: unexpected font value");
+            //Assert.IsTrue(f.IsWithinTtc, "Error: unexpected font value");
+            //Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x16C, "Error: unexpected offset table offset");
+            //Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)(0x00010000), "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.NumTables == 21, "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.SearchRange == 0x0100, "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.EntrySelector == 0x0004, "Error: unexpected font offset table value");
+            //Assert.IsTrue(f.OffsetTable.RangeShift == 80, "Error: unexpected font offset table value");
+
+
+            // Alternate test using open-source font, SourceHanSans-Regular.ttc
             OTFile target = new OTFile();
-            string FilePath = "TestData\\CAMBRIA.TTC";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "SourceHanSans-Regular.TTC";
             try
             {
                 target.ReadFromFile(FilePath);
@@ -229,34 +274,47 @@ namespace OTCodec_NUnitTest
 
             Assert.IsTrue(target.SfntVersionTag == (OTTag)("ttcf"), "Error: unexpected sfnt tag");
             // check one detail of ttc header
-            Assert.IsTrue(target.TtcHeader.DSIGOffset == 0x0018AB54, "Error: unexpected TtcHeader value");
-            Assert.IsTrue(target.NumFonts == 2, "Error: unexpected OTFile value");
-            Assert.IsTrue(target.Length == 1622732, "Error: unexpected OTFile value");
+            // SourceHanSans has a v1.0 ttc header (no DSIG table)
+            //Assert.IsTrue(target.TtcHeader.DSIGOffset == 0x0018AB54, "Error: unexpected TtcHeader value");
+            Assert.IsTrue(target.TtcHeader.OffsetTableOffsets[0] == 0x00000034, "Error: unexpected table directory offset");
+            Assert.IsTrue(target.NumFonts == 10, "Error: unexpected OTFile value");
+            Assert.IsTrue(target.Length == 20331260, "Error: unexpected OTFile value");
             Assert.IsTrue(target.IsSupportedFileType, "Error: unexpected OTFile value");
             Assert.IsTrue(target.IsCollection, "Error: unexpected OTFile value");
 
-            // now check that offset tables of both fonts are read
+            // now check that offset tables of some of the fonts are read
             OTFont f = target.GetFont(0);
-            Assert.IsTrue(f.OffsetInFile == 0x20, "Error: unexpected font offset");
-            Assert.IsTrue(f.SfntVersionTag == (OTTag)(0x00010000), "Error: unexpected font value");
+            Assert.IsTrue(f.OffsetInFile == 0x34, "Error: unexpected font offset");
+            Assert.IsTrue(f.SfntVersionTag == (OTTag)("OTTO"), "Error: unexpected font value");
             Assert.IsTrue(f.IsWithinTtc, "Error: unexpected font value");
-            Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x20, "Error: unexpected offset table offset");
-            Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)(0x00010000), "Error: unexpected font offset table value");
-            Assert.IsTrue(f.OffsetTable.NumTables == 20, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x34, "Error: unexpected offset table offset");
+            Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)("OTTO"), "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.NumTables == 16, "Error: unexpected font offset table value");
             Assert.IsTrue(f.OffsetTable.SearchRange == 0x0100, "Error: unexpected font offset table value");
             Assert.IsTrue(f.OffsetTable.EntrySelector == 0x0004, "Error: unexpected font offset table value");
-            Assert.IsTrue(f.OffsetTable.RangeShift == 64, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.RangeShift == 0, "Error: unexpected font offset table value");
 
-            f = target.GetFont(1);
-            Assert.IsTrue(f.OffsetInFile == 0x16C, "Error: unexpected font offset");
-            Assert.IsTrue(f.SfntVersionTag == (OTTag)(0x00010000), "Error: unexpected font value");
+            f = target.GetFont(2);
+            Assert.IsTrue(f.OffsetInFile == 0x24C, "Error: unexpected font offset");
+            Assert.IsTrue(f.SfntVersionTag == (OTTag)("OTTO"), "Error: unexpected font value");
             Assert.IsTrue(f.IsWithinTtc, "Error: unexpected font value");
-            Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x16C, "Error: unexpected offset table offset");
-            Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)(0x00010000), "Error: unexpected font offset table value");
-            Assert.IsTrue(f.OffsetTable.NumTables == 21, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x24C, "Error: unexpected offset table offset");
+            Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)("OTTO"), "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.NumTables == 16, "Error: unexpected font offset table value");
             Assert.IsTrue(f.OffsetTable.SearchRange == 0x0100, "Error: unexpected font offset table value");
             Assert.IsTrue(f.OffsetTable.EntrySelector == 0x0004, "Error: unexpected font offset table value");
-            Assert.IsTrue(f.OffsetTable.RangeShift == 80, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.RangeShift == 0, "Error: unexpected font offset table value");
+
+            f = target.GetFont(8);
+            Assert.IsTrue(f.OffsetInFile == 0x894, "Error: unexpected font offset");
+            Assert.IsTrue(f.SfntVersionTag == (OTTag)("OTTO"), "Error: unexpected font value");
+            Assert.IsTrue(f.IsWithinTtc, "Error: unexpected font value");
+            Assert.IsTrue(f.OffsetTable.OffsetInFile == 0x894, "Error: unexpected offset table offset");
+            Assert.IsTrue(f.OffsetTable.SfntVersion == (OTTag)("OTTO"), "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.NumTables == 16, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.SearchRange == 0x0100, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.EntrySelector == 0x0004, "Error: unexpected font offset table value");
+            Assert.IsTrue(f.OffsetTable.RangeShift == 0, "Error: unexpected font offset table value");
         }
 
         #endregion
@@ -303,7 +361,7 @@ namespace OTCodec_NUnitTest
         {
             // construct OTFile, read from test font and get memory stream
             OTFile target = new OTFile();
-            string FilePath = "TestData\\selawk.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "selawk.ttf";
             target.ReadFromFile(FilePath);
             System.IO.MemoryStream ms = target.GetMemoryStream();
 
@@ -752,7 +810,7 @@ namespace OTCodec_NUnitTest
     {
         internal static OTFile GetOTFile_ADMSB()
         {
-            string FilePath = "TestData\\ADMSB___.TTF";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "ADMSB___.TTF";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -760,7 +818,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_AndikaRegular()
         {
-            string FilePath = "TestData\\Andika-R.TTF";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "Andika-R.TTF";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -768,23 +826,23 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_BungeeColorRegular()
         {
-            string FilePath = "TestData\\BungeeColor-Regular_colr_Windows.TTF";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "BungeeColor-Regular_colr_Windows.TTF";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
         }
 
-        internal static OTFile GetOTFile_CambriaTtc()
-        {
-            string FilePath = "TestData\\CAMBRIA.TTC";
-            OTFile f = new OTFile();
-            f.ReadFromFile(FilePath);
-            return f;
-        }
+        //internal static OTFile GetOTFile_CambriaTtc()
+        //{
+        //    string FilePath = "TestData" + Path.DirectorySeparatorChar + "CAMBRIA.TTC";
+        //    OTFile f = new OTFile();
+        //    f.ReadFromFile(FilePath);
+        //    return f;
+        //}
 
         internal static OTFile GetOTFile_CharisSILRegular()
         {
-            string FilePath = "TestData\\CharisSIL-R.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "CharisSIL-R.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -792,7 +850,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_CharisSILBold()
         {
-            string FilePath = "TestData\\CharisSIL-B.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "CharisSIL-B.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -800,7 +858,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_CharisSILItalic()
         {
-            string FilePath = "TestData\\CharisSIL-I.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "CharisSIL-I.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -808,7 +866,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_CharisSILBoldItalic()
         {
-            string FilePath = "TestData\\CharisSIL-BI.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "CharisSIL-BI.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -816,7 +874,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_NotoNastaliqUrduRegular()
         {
-            string FilePath = "TestData\\NotoNastaliqUrdu-Regular.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "NotoNastaliqUrdu-Regular.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -824,7 +882,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_NotoSansMalayalamRegular()
         {
-            string FilePath = "TestData\\NotoSansMalayalam-Regular.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "NotoSansMalayalam-Regular.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -832,7 +890,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_ScheherazadeRegular()
         {
-            string FilePath = "TestData\\Scheherazade-Regular.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "Scheherazade-Regular.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -840,15 +898,16 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_SelawikRegular()
         {
-            string FilePath = "TestData\\selawk.ttf";
+            string FilePath = "TestData" + Path.AltDirectorySeparatorChar + "selawk.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
         }
 
+        // Skia.ttf is the only font I know of that has an 'fmtx' table
         internal static OTFile GetOTFile_Skia()
         {
-            string FilePath = "TestData\\Skia.ttf";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "Skia.ttf";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;
@@ -856,7 +915,7 @@ namespace OTCodec_NUnitTest
 
         internal static OTFile GetOTFile_SourceHanSans_Regular()
         {
-            string FilePath = "TestData\\SourceHanSans-Regular.ttc";
+            string FilePath = "TestData" + Path.DirectorySeparatorChar + "SourceHanSans-Regular.ttc";
             OTFile f = new OTFile();
             f.ReadFromFile(FilePath);
             return f;

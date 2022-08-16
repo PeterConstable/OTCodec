@@ -351,3 +351,9 @@ MigrationBackup/
 /OTCodec_NUnitTest/TestData/ADMSB___.TTF
 /OTCodec_NUnitTest/TestData/CAMBRIA.TTC
 /OTCodec_NUnitTest/TestData/skia.ttf
+
+# macOS files
+.DS_Store
+
+# macOS font file used in test -- would violate license to put in GitHub; should find a different font to test 'fmtx' table
+Skia.ttf

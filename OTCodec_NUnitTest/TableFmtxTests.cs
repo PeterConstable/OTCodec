@@ -15,7 +15,8 @@ namespace OTCodec_NUnitTest
             // appears to be run before each test
             if (!System.IO.Directory.Exists("TestData"))
             {
-                System.IO.Directory.SetCurrentDirectory("..\\..\\..");
+                string threeUpPath = ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + "..";
+                System.IO.Directory.SetCurrentDirectory(threeUpPath);
             }
             DirectoryAssert.Exists("TestData", "Error: Unable to locate TestData folder.");
         }
@@ -47,11 +48,12 @@ namespace OTCodec_NUnitTest
         {
             // verify table record values
             Assert.IsTrue(fmtx.Tag.Equals("fmtx"), "Error: unexpected fmtx table tag");
-            Assert.IsTrue(fmtx.TableRecordChecksum == 0x400c0804, "Error: unexpected fmtx table checksum");
-            // The Skia font has many incorrect checksum values in table records, so don't verify the 
-            // calculated checksum against the table record checksum
-            //Assert.IsTrue(fmtx.CalculatedChecksum == 0x400c0804, "Error: unexpected fmtx table checksum");
-            Assert.IsTrue(fmtx.Offset == 0x01bc, "Error: unexpected fmtx table offset");
+            Assert.IsTrue(fmtx.TableRecordChecksum == 0x04080c40, "Error: unexpected fmtx table checksum");
+            // Some earlier versions of the Skia font have an incorrect 'fmtx' checksum values in the table records
+            // (it is in little-endian representation), so the calculated checksum can't be verified against the
+            // table record checksum. In macOS 12.5, Skia has a corrected table record, so the following line works.
+            Assert.IsTrue(fmtx.CalculatedChecksum == 0x04080c40, "Error: unexpected fmtx table checksum");
+            Assert.IsTrue(fmtx.Offset == 0x01cc, "Error: unexpected fmtx table offset");
             Assert.IsTrue(fmtx.Length == 0x10, "Error: unexpected fmtx table length");
 
             // verify table values

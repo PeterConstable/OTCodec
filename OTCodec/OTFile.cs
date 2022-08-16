@@ -59,7 +59,7 @@ namespace OTCodec
         public const uint OTFileValidation_FullValidationMask                   = 0xFFFF_FFFD;
 
 
-        // record-level valication contants: single-byte for status of high-occurrence records
+        // record-level validation constants: single-byte for status of high-occurrence records
         public const byte OTRecordValidation_NotValidated               = 0x00;
         public const byte OTRecordValidation_PartialValidation          = 0x01;
         public const byte OTRecordValidation_InternalValidationOnly     = 0x02; // there are validations against other structures that have not yet been performed
@@ -377,8 +377,8 @@ namespace OTCodec
             {
                 throw new OTDataIncompleteReadException("OT parse error: unable to read int16 value");
             }
-            //ab16 = ab16.Reverse().ToArray();
-            Array.Reverse(ab16);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ab16);
             return BitConverter.ToInt16(ab16, 0);
         }
 
@@ -394,8 +394,8 @@ namespace OTCodec
             {
                 throw new OTDataIncompleteReadException("OT parse error: unable to read uint16 value");
             }
-            //ab16 = ab16.Reverse().ToArray();
-            Array.Reverse(ab16);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ab16);
             return BitConverter.ToUInt16(ab16, 0);
         }
 
@@ -421,8 +421,8 @@ namespace OTCodec
             {
                 throw new OTDataIncompleteReadException("OT parse error: unable to read int32 value");
             }
-            //ab32 = ab32.Reverse().ToArray();
-            Array.Reverse(ab32);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ab32);
             return BitConverter.ToInt32(ab32, 0);
         }
 
@@ -438,7 +438,8 @@ namespace OTCodec
             {
                 throw new OTDataIncompleteReadException("OT parse error: unable to read uint32 value");
             }
-            Array.Reverse(ab32);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ab32);
             return BitConverter.ToUInt32(ab32, 0);
         }
 
@@ -449,7 +450,8 @@ namespace OTCodec
             {
                 throw new OTDataIncompleteReadException("OT parse error: unable to read LONGDATETIME value");
             }
-            Array.Reverse(ab64);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ab64);
             return BitConverter.ToInt64(ab64, 0);
         }
 
@@ -476,7 +478,8 @@ namespace OTCodec
 
             Span<byte> val = span.Slice((int)(offset), 4);
             byte[] ab32 = val.ToArray();
-            Array.Reverse(ab32);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(ab32);
             return BitConverter.ToUInt32(ab32,0);
         }
 
